@@ -1,5 +1,6 @@
 import pygame
-from .elementcontainer import ElementContainerAbc, RelativeDimensions,
+from .elementcontainer import Dimensions2D, ElementContainerAbc,
+                    RelativeDimensions,
                     RelativeElementAbc,
                     RelativeElementDescription,
                     RelativeOffsetCoord
@@ -42,10 +43,12 @@ class UiContainer(ElementContainerAbc):
 
 class ScalableScreen:
     
-    def __init__(self, background_image_filename):
-        self.background_image_original = pygame.image.load(
-            background_image_filename
+    def __init__(self, starting_dimensions, background_image_filename=None):
+        if background_image_filename is not None:
+            self.background_image_original = pygame.image.load(
+                background_image_filename
             )
+        
         self.background_image = pygame.transform.scale(
             self.background_image_original,
-            (500, 500))
+            (starting_dimensions.width, starting_dimensions.height))
