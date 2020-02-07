@@ -1,9 +1,10 @@
 import pygame
-from .elementcontainer import Dimensions2D, ElementContainerAbc,
-                    RelativeDimensions,
-                    RelativeElementAbc,
-                    RelativeElementDescription,
+from .elementcontainer import Dimensions2D, ElementContainerAbc, \
+                    RelativeDimensions, \
+                    RelativeElementAbc, \
+                    RelativeElementDescription, \
                     RelativeOffsetCoord
+from ..config import ColorsRgb
 
 
 class UiRect(RelativeElementAbc):
@@ -19,26 +20,14 @@ class UiRect(RelativeElementAbc):
     
     def draw_element(self, top_left_corner_coords, absolute_dimensions, layer):
         """ Implement from abstract base """
-        self._screen.fill(ColorConsts.BLUE)
+        self._screen.fill(ColorsRgb.BLUE)
 
 
 class UiScreen(UiRect):
     def __init__(self):
         top_left_offset = RelativeOffsetCoord(x_percent_offset=0, y_percent_offset=0)
         dims = RelativeDimensions(height_percent=100, width_percent=100)
-        UiRec.__init__(self, top_left_offset, dims)
-
-
-class UiContainer(ElementContainerAbc):
-    """
-    Sample UI container
-    """
-    def __init__(self, ui_config):
-        """ args == element, element_parent, *children """
-        self._config = ui_config
-        relative_dimensions = RelativeDimensions(height_percent=100, width_percent=100)
-        element = UiScreen()
-        RelativeElementAbc.__init__(self, )
+        UiRect.__init__(self, top_left_offset, dims)
 
 
 class ScalableScreen:

@@ -1,6 +1,7 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 from collections import namedtuple
-from core import UpdatableAbc
+import pygame
+from ..abscore import UpdatableAbc
 
 RelativeOffsetCoord = namedtuple('RelativeOffsetCoord', 
                                 ['x_percent_offset', 'y_percent_offset'])
@@ -21,6 +22,7 @@ RelativeElementDescription = namedtuple('RelativeElementDescription', [
     'relative_dimensions',
     'relative_layer'
 ])
+
 
 class RelativeElementAbc(UpdatableAbc):
     
@@ -79,6 +81,7 @@ class RelativeElementAbc(UpdatableAbc):
     def draw_element(self, topleft_coords, absolute_dimensions, layer):
         pass
 
+
 class ElementContainerAbc(UpdatableAbc):
     
     def __init__(self, element, element_parent, *children):
@@ -88,7 +91,7 @@ class ElementContainerAbc(UpdatableAbc):
         if hasattr(element, 'name'):
             self._name = element.name
         else:
-            self._name = tostring(element)
+            self._name = str(element)
             
         self._element_parent = element_parent
         self._children = []
@@ -129,65 +132,3 @@ class ElementContainerAbc(UpdatableAbc):
     def validate_element(element):
         if not isinstance(element, UpdatableAbc):
             raise Exception('Elements must implement UpdatableAbc')
-        
-
-
-class RelativeRectangleElement(RelativeElementAbc):
-
-    def __init__(self, relative_description):
-        super().__init__(relative_description)
-
-    def draw_element(self, context, topleft_coords, absolute_dimensions, layer):
-        """
-        pygame.draw.rect()
-draw a rectangle
-rect(surface, color, rect) -> Rect
-rect(surface, color, rect, width=0) -> Rect
-Draws a rectangle on the given surface.
-
-Parameters:	
-surface (Surface) -- surface to draw on
-color (Color or int or tuple(int, int, int, [int])) -- color to draw with, the alpha value is optional if using a tuple (RGB[A])
-rect (Rect) -- rectangle to draw, position and dimensions
-width (int) --
-(optional) used for line thickness or to indicate that the rectangle is to be filled (not to be confused with the width value of the rect parameter)
-
-if width == 0, (default) fill the rectangle
-if width > 0, used for line thickness
-if width < 0, nothing will be drawn
-        """
-        
-        BLUE=(0,0,255)
-        """
-            Rect(left, top, width, height) -> Rect
-            Rect((left, top), (width, height)) -> Rect
-            Rect(object) -> Rect
-        """
-        pygame.draw.rect(context.display_surface, BLUE, 
-            (topleft_coords.x,
-            topleft_coords.y,
-            absolute_dimensions.width,
-            absolute_dimensions.height), 10)
-
-
-class RectangleElementContainer(ElementContainerAbc):
-
-    def __init__(self, rectangle, rectangle_parent):
-        super().__init__.(rectangle, rectangle_parent, *children)
-
-class ScreenContainer(ElementContainerAbc):
-
-    def __init__(self, rectangle, rectangle_parent):
-        super().__init__.(rectangle, rectangle_parent, *children)
-        
-
-if __name__ == "__main__":
-    pygame.init()
-
-    DISPLAY=pygame.display.set_mode((500,400),0,32)
-    WHITE=(255,255,255)
-    
-
-    DISPLAY.fill(WHITE)
-
-

@@ -7,3 +7,11 @@ class UpdatableAbc:
     @abstractmethod
     def update(self, context):
         pass
+
+
+class GameLoopableAbc(UpdatableAbc):
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def handle_events(self, context):
+        pass

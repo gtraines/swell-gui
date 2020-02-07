@@ -1,5 +1,4 @@
 import pygame
-from ..utils.interpolator import Interpolator
 
 
 class ElementBase(pygame.sprite.DirtySprite):
@@ -8,7 +7,7 @@ class ElementBase(pygame.sprite.DirtySprite):
     def __init__(self, color, pos, size, ui_config, handler=None):
         pygame.sprite.DirtySprite.__init__(self)
         self._ui_config = ui_config
-        if self.image == None:
+        if self.image is None:
             self.image = pygame.Surface(size).convert()
             self.image.fill(color)
 
@@ -92,15 +91,15 @@ class LcarsMoveToMouse(ElementBase):
             # move sprite to clicked location using interpolator
             fps = clock.get_fps()
             x, y = event.pos
-            
-            self.line = Interpolator(
-                self.rect.center,
-                (x, y),
-                0.5, # duration of interpolation
-                fps, # current frames per second
-                1.0, # type of interpolation
-                0.5  # middle?
-            )
-            
+            #
+            # self.line = Interpolator(
+            #     self.rect.center,
+            #     (x, y),
+            #     0.5, # duration of interpolation
+            #     fps, # current frames per second
+            #     1.0, # type of interpolation
+            #     0.5  # middle?
+            # )
+            #
             self.dirty = 1
     
