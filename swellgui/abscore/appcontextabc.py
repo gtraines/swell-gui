@@ -12,3 +12,5 @@ class AppContextAbc:
 
     def set_update_data(self, data_key, data):
         self.update_data[data_key] = data
+
+
