@@ -96,6 +96,25 @@ class SceneGraphNode(UpdatableAbc):
             raise Exception('Drawable element must implement RelativeElementAbc')
 
 
+class RectangleElement(RelativeElementAbc):
+
+    def __init__(self, relative_rectangle_description):
+        RelativeElementAbc.__init__(self, relative_rectangle_description)
+
+    def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
+        ##### DRAW THE RECTANGLE!!!!!!(on the surface)####
+        pass
+
+
+class RectangleGraphNode(SceneGraphNode):
+
+    def __init__(self, relative_rectangle_description, parent, children):
+        self._rectangle_desc = relative_rectangle_description
+        self._rectangle_element = RectangleElement(relative_rectangle_description)
+
+        SceneGraphNode.__init__(self, drawable_element=self._rectangle_element, parent=parent, children=children)
+
+
 class SceneGraph(UpdatableAbc):
 
     def __init__(self, root_node):
@@ -103,7 +122,7 @@ class SceneGraph(UpdatableAbc):
         self._root_node = root_node
 
     def update(self, context):
-        pass
+        self._root_node.update(context)
 
     @staticmethod
     def validate_node(candidate):

@@ -66,7 +66,7 @@ class RelativeElementAbc:
         absolute_layer = self.relative_layer + parent_layer
         return absolute_layer
 
-    def draw_absolute(self, parent_topleft_coord, parent_dimensions, parent_layer):
+    def draw_absolute(self, parent_topleft_coord, parent_dimensions, parent_layer, context):
         topleft_coords = self.get_absolute_topleft_coords(
             parent_topleft_coord, 
             parent_dimensions)
@@ -74,11 +74,11 @@ class RelativeElementAbc:
         layer = self.get_absolute_layer(parent_layer)
         
         # DO THE DRAW STUFF
-        self.draw_element(topleft_coords, absolute_dimensions, layer)
+        self.draw_element(topleft_coords, absolute_dimensions, layer, context)
         return True
         
     @abstractmethod
-    def draw_element(self, topleft_coords, absolute_dimensions, layer):
+    def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
         pass
 
 
