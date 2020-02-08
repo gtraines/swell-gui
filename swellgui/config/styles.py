@@ -22,13 +22,33 @@ SAMPLE_STYLE = {
 
 
 class ElementStyle:
-    def __init__(self, background_color, border_color):
-        self._style_dict = {}
-        self._style_dict['color'] = background_color
-        self._style_dict['border_color'] = border_color
+    def __init__(self, background_color, foreground_color, **kwargs):
+        self._style_dict = {
+            'color': background_color,
+            'border_color': foreground_color,
+            "font": pg.font.Font(None, 12),
+            "hover_color": None,
+            "clicked_color": None,
+            "font_color": foreground_color,
+            "hover_font_color": None,
+            "clicked_font_color": None,
+            "click_sound": None,
+            "hover_sound": None,
+            'border_color': foreground_color,
+            'border_hover_color': pg.Color('yellow'),
+            'disabled_color': pg.Color('grey'),
+            'radius': 3
+        }
 
-    def set_font(self, font_name, font_color, hover_font_color=None):
+        for arg_key in kwargs.keys():
+            self._style_dict[arg_key] = kwargs[arg_key]
+
+    def get_pg_font(self):
+        return pg.font.SysFont(self._style_dict['font'], self._style_dict['font_size'], True, False)
+
+    def set_font(self, font_name, font_size, font_color, hover_font_color=None):
         self._style_dict['font'] = font_name
+        self._style_dict['font_size'] = font_size
         self._style_dict['font_color'] = font_color
         self._style_dict['hover_font_color'] = hover_font_color
 

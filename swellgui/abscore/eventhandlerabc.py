@@ -5,16 +5,24 @@ class EventHandlerAbc:
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, event_key, event_type):
-        self.event_key = event_key
-        self.event_type = event_type
-
+    @abstractmethod
     def can_handle(self, event):
-        if event.key == self.event_key and event.type == self.event_type:
-            return True
-
-        return False
+        pass
 
     @abstractmethod
     def handle_event(self, event, context):
         pass
+
+
+class EventTypeHandlerAbc:
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def handle_events(self, events, context):
+        pass
+
+    @staticmethod
+    def validate_handler(candidate):
+
+        if not isinstance(candidate, EventHandlerAbc):
+            raise Exception('Handlers must implement EventHandlerAbc')

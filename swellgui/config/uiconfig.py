@@ -7,13 +7,15 @@ DEFAULT_AUDIO_PARAMETERS = AudioParameters(frequency=22050, size=-8, channels=1,
 
 class UiConfig:
     def __init__(self, 
-                 ui_dimensions, 
+                 ui_dimensions,
+                 default_style,
                  sound_on=True, 
                  audio_params=AudioParameters(frequency=22050, size=-8, channels=1, buffer_size=4096),
                  refresh_rate_hz=60, 
                  placement_mode_on=True, 
                  debug_mode_on=True):
-        
+
+        self.default_style = default_style
         self._ui_dimensions = ui_dimensions
         self._sound_on = sound_on
         self._audio_params = audio_params
@@ -44,3 +46,6 @@ class UiConfig:
     @property
     def ui_dimensions(self):
         return self._ui_dimensions
+
+    def update_ui_dimensions(self, updated_dimensions):
+        self._ui_dimensions = updated_dimensions

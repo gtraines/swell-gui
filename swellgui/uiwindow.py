@@ -1,5 +1,6 @@
 from .abscore import UpdatableAbc
 from .uiconstants import DEFAULT_UI_CONFIG
+from .config import ColorsRgb
 import pygame
 from pygame import constants as consts
 
@@ -14,22 +15,18 @@ class UiWindow(UpdatableAbc):
         self._is_exit_requested = False
         self._screen_surface = None
         self._screen = None
-        self._fps_clock = None
         self._all_sprites = None
+        self._ui_config = ui_config
 
-        self._ui_config = ui_config or DEFAULT_UI_CONFIG
-        self._fps = self._ui_config.refresh_rate_hz
-
-        self._launch_window()
-
-    def _launch_window(self):
+    def launch_window(self, context):
         if not self._launched:
             try:
                 pygame.display.init()
                 pygame.font.init()
                 self._screen_surface = pygame.display.set_mode(self._ui_config.ui_dimensions,
-                                                                consts.HWSURFACE | consts.DOUBLEBUF | consts.RESIZABLE)
-                self._fps_clock = pygame.time.Clock()
+                                                               consts.HWSURFACE | consts.DOUBLEBUF | consts.RESIZABLE)
+                context.set_ui_surface(self._screen_surface)
+                context.reset_fps_clock()
                 pygame.display.set_caption(self.WINDOW_CAPTION)
                 if not self._ui_config.debug_mode_on:
                     # see https://github.com/tobykuren/rpi_lcars/issues/9
@@ -44,6 +41,9 @@ class UiWindow(UpdatableAbc):
             except Exception as cex:
                 print(repr(cex))
                 self._launched = False
+
+    def close_window(self):
+        self._is_exit_requested = True
 
     @property
     def is_running(self):
@@ -60,27 +60,31 @@ class UiWindow(UpdatableAbc):
         # GET the UI elements container somehow -- maybe a parameter
         if context is not None:
             # each UI element updates itself from the data on the context
-            self.handle_events(context)
             if self.is_running:
+                self._screen_surface = context.ui_surface
+
                 self._all_sprites.update(self._screen_surface)
 
                 #self._screen.update(self._screen_surface, self._fps_clock)
-                pygame.display.update()
+                self._show_updated_screen(context)
             else:
                 print('UI exiting')
         else:
             print('WARNING: No context data or context was None')
 
-        self._fps_clock.tick(self._fps)
+        context.fps_clock.tick(context.ui_config.refresh_rate_hz)
 
-    def handle_events(self, context):
-        context.user_input_events = pygame.event.get()
-        for event in context.user_input_events:
+    def _update_screen_buffer(self, context):
+        self._clear_screen_buffer(context)
+        self._draw_components(context)
 
-            if (event.type == pygame.QUIT) or \
-                    (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
-                self._is_exit_requested = True
-                pygame.quit()
-                return False
-        # otherwise, send the context through to the child elements
-        return True
+    def _draw_components(self, context):
+        # Render the text. "True" means anti-aliased text.
+
+        text = self._font.render(context.input_message, True, ColorsRgb.WHITE)
+
+        # Put the image of the text on the screen at 250x250
+        self._screen.blit(text, [250, 250])
+
+    def _show_updated_screen(self, context):
+        pygame.display.flip()
