@@ -1,7 +1,7 @@
 import pygame
 
 
-class ElementBase(pygame.sprite.DirtySprite):
+class SpriteElementBase(pygame.sprite.DirtySprite):
     """Base class for all widgets"""
 
     def __init__(self, color, pos, size, ui_config, handler=None):
@@ -78,12 +78,12 @@ class ElementBase(pygame.sprite.DirtySprite):
                     self.image.set_at((x, y), colour)
 
 
-class LcarsMoveToMouse(ElementBase):
+class LcarsMoveToMouse(SpriteElementBase):
     """For testing purposes - move a small square to last clicked position"""
     def __init__(self, color, ui_config):
         self.image = None
         
-        ElementBase.__init__(self, color, (0,0), (10,10), ui_config)
+        SpriteElementBase.__init__(self, color, (0,0), (10,10), ui_config)
         self.focussed = True
 
     def handleEvent(self, event, clock):
@@ -102,4 +102,3 @@ class LcarsMoveToMouse(ElementBase):
             # )
             #
             self.dirty = 1
-    

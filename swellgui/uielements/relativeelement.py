@@ -1,7 +1,5 @@
 from abc import abstractmethod
-import pygame
 from collections import namedtuple
-from ..abscore import UpdatableAbc
 
 RelativeOffsetCoord = namedtuple('RelativeOffsetCoord', 
                                 ['x_percent_offset', 'y_percent_offset'])
@@ -82,54 +80,3 @@ class RelativeElementAbc:
     @abstractmethod
     def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
         pass
-
-
-class ElementContainerAbc(UpdatableAbc):
-    
-    def __init__(self, element, element_parent, *children):
-        self.validate_element(element)
-        self._element = element
-        
-        if hasattr(element, 'name'):
-            self._name = element.name
-        else:
-            self._name = str(element)
-            
-        self._element_parent = element_parent
-        self._children = []
-        
-        if children is not None and len(children) > 0:
-            for child in children:
-                self.add_child(child)
-    
-    def add_child(self, element_to_add):
-        self.validate_element(element_to_add)
-        self._children.append(element_to_add)
-    
-    def update(self, context):
-        success = self._element.update(context)
-        try:
-            for child in self._children:
-                update_result = child.update(context)
-                if not update_result:
-                    raise Exception(child.name)
-        
-        except Exception as ex:
-            raise Exception('Child of element failed to update', ex)
-        return success
-    
-    @abstractmethod
-    def set_relative_position(self, context):
-        pass
-    
-    @abstractmethod
-    def get_position_relative_to_parent(self, context):
-        pass
-    
-    def draw(self, context):
-        topleft_relative_coord = self.get_position_relative_to_parent(context)
-
-    @staticmethod
-    def validate_element(element):
-        if not isinstance(element, UpdatableAbc):
-            raise Exception('Elements must implement UpdatableAbc')

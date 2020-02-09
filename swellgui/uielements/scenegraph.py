@@ -1,7 +1,6 @@
-import pygame
-from pygame.rect import Rect
+
 from ..abscore import UpdatableAbc
-from .elementcontainer import Coord2D, Dimensions2D, RelativeElementAbc
+from .relativeelement import Coord2D, Dimensions2D, RelativeElementAbc
 
 
 class SceneGraphNode(UpdatableAbc):
@@ -99,31 +98,6 @@ class SceneGraphNode(UpdatableAbc):
         if not isinstance(candidate, RelativeElementAbc):
             raise Exception('Drawable element must implement RelativeElementAbc')
 
-
-class RectangleElement(RelativeElementAbc):
-
-    def __init__(self, relative_rectangle_description):
-        RelativeElementAbc.__init__(self, relative_rectangle_description)
-
-    def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
-
-        self.absolute_element = Rect((topleft_coords.y,
-                                     topleft_coords.x),
-                                     (absolute_dimensions.width,
-                                     absolute_dimensions.height))
-        pygame.draw.rect(context.ui_surface,
-                         context.ui_config.default_style.get_value('border_color'),
-                         self.absolute_element,
-                         context.ui_config.default_style.get_value('radius'))
-
-
-class RectangleGraphNode(SceneGraphNode):
-
-    def __init__(self, relative_rectangle_description, parent, children):
-        self._rectangle_desc = relative_rectangle_description
-        self._rectangle_element = RectangleElement(relative_rectangle_description)
-
-        SceneGraphNode.__init__(self, drawable_element=self._rectangle_element, parent=parent, children=children)
 
 
 class SceneGraph(UpdatableAbc):

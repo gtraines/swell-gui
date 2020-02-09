@@ -1,2 +1,3 @@
-from .scenegraph import SceneGraphNode, SceneGraph, RectangleGraphNode
-from .elementcontainer import Coord2D, RelativeDimensions, RelativeElementDescription, RelativeOffsetCoord
+from .scenegraph import SceneGraphNode, SceneGraph
+from .relativeelement import Coord2D, RelativeDimensions, RelativeElementDescription, RelativeOffsetCoord
+from .shapenodes import RectangleGraphNode
