@@ -32,8 +32,8 @@ class GuiApp(GuiAppAbc):
 
     @staticmethod
     def _get_starting_scene_graph():
-        root_offset_topleft = RelativeOffsetCoord(x_percent_offset=0, y_percent_offset=0)
-        root_dims_offset = RelativeDimensions(height_percent=.95, width_percent=.95)
+        root_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.025, y_percent_offset=0.025)
+        root_dims_offset = RelativeDimensions(height_percent=0.95, width_percent=0.95)
         root_elem_desc = RelativeElementDescription(topleft_offset=root_offset_topleft,
                                                     relative_dimensions=root_dims_offset,
                                                     relative_layer=1)

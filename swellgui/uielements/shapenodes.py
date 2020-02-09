@@ -28,8 +28,8 @@ class RectangleElement(RelativeElementAbc):
             if width > 0, used for line thickness
             if width < 0, nothing will be drawn
         """
-        self.absolute_element = Rect((topleft_coords.y,
-                                     topleft_coords.x),
+        self.absolute_element = Rect((topleft_coords.x,
+                                     topleft_coords.y),
                                      (absolute_dimensions.width,
                                      absolute_dimensions.height))
         pygame.draw.rect(context.ui_surface,
