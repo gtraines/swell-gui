@@ -1,3 +1,5 @@
+import pygame
+from pygame.rect import Rect
 from ..abscore import UpdatableAbc
 from .elementcontainer import Coord2D, Dimensions2D, RelativeElementAbc
 
@@ -28,18 +30,20 @@ class SceneGraphNode(UpdatableAbc):
         if self._parent is None:
             # Then it is the top-level node aka root
             dims = Dimensions2D(height=context.ui_surface.get_height(),
-                                weight=context.ui_surface.get_width())
+                                width=context.ui_surface.get_width())
 
             self._drawable_element.draw_absolute(
                 parent_topleft_coord=Coord2D(0, 0),
                 parent_dimensions=dims,
-                parent_layer=0
+                parent_layer=0,
+                context=context
             )
         else:
             self._drawable_element.draw_absolute(
                 parent_topleft_coord=self._parent.get_absolute_topleft_coords(),
                 parent_dimensions=self._parent.get_absolute_dimensions(),
-                parent_layer=self._parent.get_absolute_layer())
+                parent_layer=self._parent.get_absolute_layer(),
+                context=context)
 
     def get_absolute_topleft_coords(self):
         if self._parent is None:
@@ -102,8 +106,15 @@ class RectangleElement(RelativeElementAbc):
         RelativeElementAbc.__init__(self, relative_rectangle_description)
 
     def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
-        ##### DRAW THE RECTANGLE!!!!!!(on the surface)####
-        pass
+
+        self.absolute_element = Rect((topleft_coords.y,
+                                     topleft_coords.x),
+                                     (absolute_dimensions.width,
+                                     absolute_dimensions.height))
+        pygame.draw.rect(context.ui_surface,
+                         context.ui_config.default_style.get_value('border_color'),
+                         self.absolute_element,
+                         context.ui_config.default_style.get_value('radius'))
 
 
 class RectangleGraphNode(SceneGraphNode):
@@ -119,6 +130,7 @@ class SceneGraph(UpdatableAbc):
 
     def __init__(self, root_node):
         self.validate_is_updatable(root_node)
+        self.validate_node(root_node)
         self._root_node = root_node
 
     def update(self, context):

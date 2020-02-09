@@ -7,31 +7,31 @@ class GuiAppAbc:
 
     def __init__(self, gui_window, context, events_handlers):
         self.gui_window = gui_window
-        self.context = context
+        self._context = context
         self.events_handlers = events_handlers
 
     def run(self):
-        self.gui_window.launch_window()
-        while not self.context.is_exit_requested:
-            self.set_user_inputs_on_context()
-            self.handle_events()
-            self.gui_window.update(self.context)
+        self.gui_window.launch_window(self._context)
+        while not self._context.is_exit_requested:
+            self.set_user_inputs_on_context(self._context)
+            self.handle_events(self._context)
+            self.gui_window.update(self._context)
 
         self.end_app()
 
-    def handle_events(self):
+    def handle_events(self, context):
 
-        for event in self.context.user_input_events:
+        for event in context.user_input_events:
 
             if self.check_for_quit_event(event):
-                self.context.is_exit_requested = True
+                context.is_exit_requested = True
                 return
 
         for events_handler in self.events_handlers:
-            events_handler.handle_events(self.context.user_input_events, self.context)
+            events_handler.handle_events(context.user_input_events, context)
 
-    def set_user_inputs_on_context(self):
-        self.context.user_input_events = pygame.event.get()
+    def set_user_inputs_on_context(self, context):
+        context.user_input_events = pygame.event.get()
 
     def check_for_quit_event(self, event):
         if (event.type == pygame.QUIT) or \
@@ -43,8 +43,8 @@ class GuiAppAbc:
 
     def end_app(self):
         print('Requested exit')
-        self.context.is_exit_requested = True
-        self.context.is_exiting = True
+        self._context.is_exit_requested = True
+        self._context.is_exiting = True
         self.cleanup()
         self.gui_window.close_window()
         pygame.quit()

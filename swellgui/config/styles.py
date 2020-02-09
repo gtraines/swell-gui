@@ -26,22 +26,29 @@ class ElementStyle:
         self._style_dict = {
             'color': background_color,
             'border_color': foreground_color,
-            "font": pg.font.Font(None, 12),
-            "hover_color": None,
+            'border_hover_color': pg.Color('yellow'),
             "clicked_color": None,
-            "font_color": foreground_color,
-            "hover_font_color": None,
             "clicked_font_color": None,
             "click_sound": None,
+            "font": 'Calibri',
+            "font_size": 12,
+            "font_color": foreground_color,
+            "hover_color": None,
+            "hover_font_color": None,
             "hover_sound": None,
-            'border_color': foreground_color,
-            'border_hover_color': pg.Color('yellow'),
             'disabled_color': pg.Color('grey'),
             'radius': 3
         }
 
         for arg_key in kwargs.keys():
             self._style_dict[arg_key] = kwargs[arg_key]
+
+    def get_value(self, value_key):
+        if value_key in self._style_dict.keys():
+            return self._style_dict[value_key]
+        print('Attempted to retrieve a style key that did not exist: ' + value_key)
+        self._style_dict[value_key] = None
+        return None
 
     def get_pg_font(self):
         return pg.font.SysFont(self._style_dict['font'], self._style_dict['font_size'], True, False)

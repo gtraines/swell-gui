@@ -1,18 +1,19 @@
 from abc import abstractmethod
-from collections import namedtuple
 import pygame
+from collections import namedtuple
 from ..abscore import UpdatableAbc
 
 RelativeOffsetCoord = namedtuple('RelativeOffsetCoord', 
                                 ['x_percent_offset', 'y_percent_offset'])
-RelativeDimensions = namedtuple('RelativeDimensions', 
+
+RelativeDimensions = namedtuple('RelativeDimensions',
                                 ['height_percent', 'width_percent'])
 
 ScalingCoefficentVector2D = namedtuple('ScalingCoefficientVector2D',
                                         ['x_coefficient', 'y_coefficient'])
-Coord2D = namedtuple('Coord2D', 
-        ['x', 'y']
-    )
+
+Coord2D = namedtuple('Coord2D', ['x', 'y'])
+
 Dimensions2D = namedtuple('Dimensions2D', 
         ['height', 'width']
     )
@@ -31,6 +32,7 @@ class RelativeElementAbc:
         relative_description: RelativeElementDescription
         """
         self._relative_element_description = relative_description
+        self.absolute_element = None
         
     @property
     def relative_element_description(self):
@@ -57,8 +59,8 @@ class RelativeElementAbc:
         return Coord2D(x=x_coord, y=y_coord)
     
     def get_absolute_dimensions(self, parent_dimensions):
-        height = parent_dimensions * self.relative_dimensions.height_percent
-        width = parent_dimensions * self.relative_dimensions.width_percent
+        height = parent_dimensions.height * self.relative_dimensions.height_percent
+        width = parent_dimensions.width * self.relative_dimensions.width_percent
 
         return Dimensions2D(height=height, width=width)
     
@@ -99,7 +101,6 @@ class ElementContainerAbc(UpdatableAbc):
         if children is not None and len(children) > 0:
             for child in children:
                 self.add_child(child)
-        
     
     def add_child(self, element_to_add):
         self.validate_element(element_to_add)

@@ -13,6 +13,28 @@ class ResizeWindowHandler(EventHandlerAbc):
         return hasattr(event, 'type') and event.type == pyg_const.VIDEORESIZE
 
 
+class WindowEventsHandler(EventTypeHandlerAbc):
+
+    def __init__(self):
+        self.handlers = [
+            ResizeWindowHandler()
+        ]
+
+    @property
+    def handlers_for_event_types(self):
+        return [pyg_const.VIDEORESIZE]
+
+    def handle_events(self, events, context):
+        for evt in events:
+            if evt.type in self.handlers_for_event_types:
+                self._try_handle_event(evt, context)
+
+    def _try_handle_event(self, event, context):
+        for handler in self.handlers:
+            if handler.can_handle(event):
+                handler.handle_event(event, context)
+
+
 class KeypressHandler(EventHandlerAbc):
 
     def __init__(self, event_key, event_type, handler_lambda, keypress_modifier=None):
@@ -40,14 +62,20 @@ class KeypressHandler(EventHandlerAbc):
         except Exception as handle_ex:
             print(repr(handle_ex))
 
+
 class KeypressEventsHandler(EventTypeHandlerAbc):
 
     def __init__(self):
         self.keypress_handlers = {}
 
+    @property
+    def handlers_for_event_types(self):
+        return [pyg_const.KEYDOWN, pyg_const.KEYUP]
+
     def handle_events(self, events, context):
         for evt in events:
-            self.handle_keypress_event(evt, context)
+            if evt.type in self.handlers_for_event_types:
+                self.handle_keypress_event(evt, context)
 
     def handle_keypress_event(self, event, context):
         """

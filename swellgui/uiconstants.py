@@ -16,4 +16,4 @@ class WindowDimensions:
 DEFAULT_UI_STYLE = ElementStyle(ColorsRgb.DARK_BLUE, ColorsRgb.MAGENTA)
 
 
-DEFAULT_UI_CONFIG = UiConfig(WindowDimensions.MEDIUM)
+DEFAULT_UI_CONFIG = UiConfig(WindowDimensions.MEDIUM, DEFAULT_UI_STYLE)

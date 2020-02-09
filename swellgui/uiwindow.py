@@ -1,5 +1,5 @@
 from .abscore import UpdatableAbc
-from .uiconstants import DEFAULT_UI_CONFIG
+
 from .config import ColorsRgb
 import pygame
 from pygame import constants as consts
@@ -9,7 +9,7 @@ class UiWindow(UpdatableAbc):
 
     WINDOW_CAPTION = "TESTING"
 
-    def __init__(self, ui_config=None):
+    def __init__(self, ui_config):
 
         self._launched = False
         self._is_exit_requested = False
@@ -59,13 +59,8 @@ class UiWindow(UpdatableAbc):
         """
         # GET the UI elements container somehow -- maybe a parameter
         if context is not None:
-            # each UI element updates itself from the data on the context
             if self.is_running:
-                self._screen_surface = context.ui_surface
-
-                self._all_sprites.update(self._screen_surface)
-
-                #self._screen.update(self._screen_surface, self._fps_clock)
+                self._update_screen_buffer(context)
                 self._show_updated_screen(context)
             else:
                 print('UI exiting')
@@ -75,8 +70,12 @@ class UiWindow(UpdatableAbc):
         context.fps_clock.tick(context.ui_config.refresh_rate_hz)
 
     def _update_screen_buffer(self, context):
-        self._clear_screen_buffer(context)
-        self._draw_components(context)
+        self._screen_surface = context.ui_surface
+        self._all_sprites.update(self._screen_surface)
+        context.scene_graph.update(context)
+        # self._screen.update(self._screen_surface, self._fps_clock)
+        #self._clear_screen_buffer(context)
+        #self._draw_components(context)
 
     def _draw_components(self, context):
         # Render the text. "True" means anti-aliased text.

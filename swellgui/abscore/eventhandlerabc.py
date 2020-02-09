@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 
 class EventHandlerAbc:
@@ -16,6 +16,10 @@ class EventHandlerAbc:
 
 class EventTypeHandlerAbc:
     __metaclass__ = ABCMeta
+
+    @abstractproperty
+    def handlers_for_event_types(self):
+        pass
 
     @abstractmethod
     def handle_events(self, events, context):
