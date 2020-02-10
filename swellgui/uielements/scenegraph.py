@@ -1,5 +1,5 @@
 
-from ..abscore import UpdatableAbc
+from ..abscore import UpdatableAbc, Validations
 from .relativeelement import Coord2D, Dimensions2D, RelativeElementAbc
 
 
@@ -9,7 +9,7 @@ class SceneGraphNode(UpdatableAbc):
 
         self._drawable_element = drawable_element
         if self._drawable_element is not None:
-            self.validate_drawable(self._drawable_element)
+            Validations.assert_is_drawable(self._drawable_element)
 
         self._parent = parent
         self._children = []
@@ -88,31 +88,16 @@ class SceneGraphNode(UpdatableAbc):
 
     @staticmethod
     def validate_node(candidate):
-        if not isinstance(candidate, UpdatableAbc):
-            raise Exception('Graph node must implement UpdatableAbc')
+        Validations.assert_is_updatable(candidate)
         if not isinstance(candidate, SceneGraphNode):
             raise Exception('Graph node must inherit from SceneGraphNode')
-
-    @staticmethod
-    def validate_drawable(candidate):
-        if not isinstance(candidate, RelativeElementAbc):
-            raise Exception('Drawable element must implement RelativeElementAbc')
-
 
 
 class SceneGraph(UpdatableAbc):
 
     def __init__(self, root_node):
-        self.validate_is_updatable(root_node)
-        self.validate_node(root_node)
+        SceneGraphNode.validate_node(root_node)
         self._root_node = root_node
 
     def update(self, context):
         self._root_node.update(context)
-
-    @staticmethod
-    def validate_node(candidate):
-        if not isinstance(candidate, UpdatableAbc):
-            raise Exception('Graph node must implement UpdatableAbc')
-        if not isinstance(candidate, SceneGraphNode):
-            raise Exception('Graph node must inherit from SceneGraphNode')

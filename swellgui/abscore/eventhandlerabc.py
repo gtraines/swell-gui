@@ -24,9 +24,3 @@ class EventTypeHandlerAbc:
     @abstractmethod
     def handle_events(self, events, context):
         pass
-
-    @staticmethod
-    def validate_handler(candidate):
-
-        if not isinstance(candidate, EventHandlerAbc):
-            raise Exception('Handlers must implement EventHandlerAbc')

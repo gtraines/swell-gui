@@ -5,7 +5,7 @@ import pygame
 class GuiAppAbc:
     __metaclass__ = ABCMeta
 
-    def __init__(self, gui_window, context, events_handlers):
+    def __init__(self, gui_window, context, events_handlers, *context_processors):
         self.gui_window = gui_window
         self._context = context
         self.events_handlers = events_handlers

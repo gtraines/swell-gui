@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from collections import namedtuple
+from ..abscore import DrawableAbc
 
 RelativeOffsetCoord = namedtuple('RelativeOffsetCoord', 
                                 ['x_percent_offset', 'y_percent_offset'])
@@ -23,7 +24,7 @@ RelativeElementDescription = namedtuple('RelativeElementDescription', [
 ])
 
 
-class RelativeElementAbc:
+class RelativeElementAbc(DrawableAbc):
     
     def __init__(self, relative_description):
         """
