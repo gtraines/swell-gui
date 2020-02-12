@@ -1,4 +1,4 @@
-from .elementbase import ElementBase
+from .spriteelement import ElementBase
 import pygame
 
 class LcarsBackground(ElementBase):

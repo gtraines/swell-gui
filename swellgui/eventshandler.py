@@ -1,6 +1,6 @@
 import pygame
 from pygame import locals as pyg_const
-from .abscore import UpdatableAbc, EventHandlerAbc, EventTypeHandlerAbc
+from .abscore import UpdatableAbc, EventHandlerAbc, EventTypeHandlerAbc, Validations
 
 
 class ResizeWindowHandler(EventHandlerAbc):
@@ -100,7 +100,7 @@ class KeypressEventsHandler(EventTypeHandlerAbc):
                 handler.handle_event(event, context)
 
     def add_handler(self, handler):
-        self.validate_handler(handler)
+        Validations.assert_is_eventhandler(handler)
         if handler.event_key not in self.keypress_handlers.keys():
             self.keypress_handlers[handler.event_key] = []
 

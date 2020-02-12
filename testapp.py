@@ -4,10 +4,14 @@ from swellgui import UiWindow, AppContextAbc, GuiAppAbc, \
 from pygame import locals as pyg_consts
 from swellgui import DEFAULT_UI_CONFIG
 from swellgui.uielements import Coord2D, \
+                                DynamicTextGraphNode, \
                                 SceneGraph, \
                                 SceneGraphNode, \
                                 RectangleGraphNode, \
-                                RelativeDimensions, RelativeElementDescription, RelativeOffsetCoord
+                                RelativeDimensions, \
+                                RelativeElementDescription, \
+                                RelativeOffsetCoord, \
+                                StaticTextGraphNode
 
 
 class GuiAppContext(AppContextAbc):
@@ -32,12 +36,20 @@ class GuiApp(GuiAppAbc):
 
     @staticmethod
     def _get_starting_scene_graph():
+        text_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.01, y_percent_offset=0.01)
+        text_dimensions_offset = RelativeDimensions(height_percent=.90, width_percent=.90)
+        text_elem_desc = RelativeElementDescription(topleft_offset=text_offset_topleft,
+                                                    relative_dimensions=text_dimensions_offset,
+                                                    relative_layer=1)
+        static_text_node = StaticTextGraphNode("HELLO", text_elem_desc, None, None)
+
         root_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.025, y_percent_offset=0.025)
         root_dims_offset = RelativeDimensions(height_percent=0.95, width_percent=0.95)
         root_elem_desc = RelativeElementDescription(topleft_offset=root_offset_topleft,
                                                     relative_dimensions=root_dims_offset,
                                                     relative_layer=1)
         root_node = RectangleGraphNode(root_elem_desc, None,  None)
+        root_node.add_child(static_text_node)
         scene_graph = SceneGraph(root_node)
         return scene_graph
 

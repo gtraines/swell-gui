@@ -39,20 +39,20 @@ class SceneGraphNode(UpdatableAbc):
             )
         else:
             self._drawable_element.draw_absolute(
-                parent_topleft_coord=self._parent.get_absolute_topleft_coords(),
-                parent_dimensions=self._parent.get_absolute_dimensions(),
+                parent_topleft_coord=self._parent.get_absolute_topleft_coords(context),
+                parent_dimensions=self._parent.get_absolute_dimensions(context),
                 parent_layer=self._parent.get_absolute_layer(),
                 context=context)
 
-    def get_absolute_topleft_coords(self):
+    def get_absolute_topleft_coords(self, context):
         if self._parent is None:
             return Coord2D(0, 0)
         elif self._drawable_element is not None:
             return self._drawable_element.get_absolute_topleft_coords(
-                self._parent.get_absolute_topleft_coords(),
-                self._parent.get_absolute_dimensions())
+                self._parent.get_absolute_topleft_coords(context),
+                self._parent.get_absolute_dimensions(context))
         else:
-            return self._parent.get_absolute_topleft_coords()
+            return self._parent.get_absolute_topleft_coords(context)
 
     def get_absolute_layer(self):
         if self._parent is None:
@@ -72,7 +72,7 @@ class SceneGraphNode(UpdatableAbc):
             return self._drawable_element.get_absolute_dimensions(self._parent.get_absolute_dimensions())
         else:
             # we have an invisible/pass through node so use the parent
-            return self._parent.get_absolute_dimensions()
+            return self._parent.get_absolute_dimensions(context)
 
     def set_parent(self, parent):
         self._parent = parent

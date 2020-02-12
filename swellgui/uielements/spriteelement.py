@@ -76,29 +76,3 @@ class SpriteElementBase(pygame.sprite.DirtySprite):
                 pixel = self.image.get_at((x, y)).r
                 if (pixel > 50):
                     self.image.set_at((x, y), colour)
-
-
-class LcarsMoveToMouse(SpriteElementBase):
-    """For testing purposes - move a small square to last clicked position"""
-    def __init__(self, color, ui_config):
-        self.image = None
-        
-        SpriteElementBase.__init__(self, color, (0,0), (10,10), ui_config)
-        self.focussed = True
-
-    def handleEvent(self, event, clock):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # move sprite to clicked location using interpolator
-            fps = clock.get_fps()
-            x, y = event.pos
-            #
-            # self.line = Interpolator(
-            #     self.rect.center,
-            #     (x, y),
-            #     0.5, # duration of interpolation
-            #     fps, # current frames per second
-            #     1.0, # type of interpolation
-            #     0.5  # middle?
-            # )
-            #
-            self.dirty = 1

@@ -38,6 +38,45 @@ class RectangleElement(RelativeElementAbc):
                          context.ui_config.default_style.get_value('radius'))
 
 
+class StaticTextRectangleElement(RelativeElementAbc):
+
+    def __init__(self, relative_rectangle_description, static_text):
+        self._rectangle_desc = relative_rectangle_description
+        self._static_text = static_text
+        RelativeElementAbc.__init__(self, relative_rectangle_description)
+
+    def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
+
+        # Render the text. "True" means anti-aliased text.
+        style_font = context.ui_config.default_style.get_pg_font()
+        style_font_color = context.ui_config.default_style.get_value('font_color')
+        text = style_font.render(self._static_text, True, style_font_color)
+
+        context.ui_surface.blit(text, [topleft_coords.x, topleft_coords.y])
+
+
+class DynamicTextElement(RelativeElementAbc):
+
+    def __init__(self, relative_rectangle_description, context_data_key, starting_text=None):
+        self._rectangle_desc = relative_rectangle_description
+        self._starting_text = starting_text
+        self._context_data_key = context_data_key
+
+        RelativeElementAbc.__init__(self, relative_rectangle_description)
+
+    def draw_element(self, topleft_coords, absolute_dimensions, layer, context):
+        # Render the text. "True" means anti-aliased text.
+        if context.update_data is not None and context.update_data[self._context_data_key] is not None:
+
+            style_font = context.ui_config.default_style.get_pg_font()
+            style_font_color = context.ui_config.default_style.get_value('font_color')
+            text = style_font.render(context.update_data[self._context_data_key],
+                                     True,
+                                     style_font_color)
+
+        context.ui_surface.blit(text, [topleft_coords.x, topleft_coords.y])
+
+
 class RectangleGraphNode(SceneGraphNode):
 
     def __init__(self, relative_rectangle_description, parent, children):
@@ -45,3 +84,36 @@ class RectangleGraphNode(SceneGraphNode):
         self._rectangle_element = RectangleElement(relative_rectangle_description)
 
         SceneGraphNode.__init__(self, drawable_element=self._rectangle_element, parent=parent, children=children)
+
+
+class StaticTextGraphNode(SceneGraphNode):
+
+    def __init__(self, static_text, relative_rectangle_description, parent, children):
+        self._rectangle_desc = relative_rectangle_description
+
+        SceneGraphNode.__init__(self,
+                                drawable_element=StaticTextRectangleElement(relative_rectangle_description,
+                                                                            static_text),
+                                parent=parent,
+                                children=children)
+
+
+class DynamicTextGraphNode(SceneGraphNode):
+
+    def __init__(self, relative_rectangle_description, context_data_key, parent, children, starting_text=None):
+        self._rectangle_desc = relative_rectangle_description
+
+        SceneGraphNode.__init__(self,
+                                drawable_element=DynamicTextElement(relative_rectangle_description,
+                                                                    context_data_key,
+                                                                    starting_text),
+                                parent=parent,
+                                children=children)
+    # def hideInfoText(self):
+    #     if self.info_text[0].visible:
+    #         for sprite in self.info_text:
+    #             sprite.visible = False
+    #
+    # def showInfoText(self):
+    #     for sprite in self.info_text:
+    #         sprite.visible = True
