@@ -36,7 +36,7 @@ class GuiApp(GuiAppAbc):
 
     @staticmethod
     def _get_starting_scene_graph():
-        text_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.01, y_percent_offset=0.01)
+        text_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.05, y_percent_offset=0.05)
         text_dimensions_offset = RelativeDimensions(height_percent=.90, width_percent=.90)
         text_elem_desc = RelativeElementDescription(topleft_offset=text_offset_topleft,
                                                     relative_dimensions=text_dimensions_offset,

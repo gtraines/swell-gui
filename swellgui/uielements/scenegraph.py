@@ -44,13 +44,29 @@ class SceneGraphNode(UpdatableAbc):
                 parent_layer=self._parent.get_absolute_layer(),
                 context=context)
 
+    @property
+    def drawable_element(self):
+        return self._drawable_element
+
     def get_absolute_topleft_coords(self, context):
         if self._parent is None:
             return Coord2D(0, 0)
         elif self._drawable_element is not None:
-            return self._drawable_element.get_absolute_topleft_coords(
-                self._parent.get_absolute_topleft_coords(context),
-                self._parent.get_absolute_dimensions(context))
+            parent_abs_coords = self._parent.get_absolute_topleft_coords(context)
+            parent_drawable_element = self._parent.drawable_element
+
+            if parent_abs_coords.x == 0 \
+            and parent_abs_coords.y == 0 \
+            and parent_drawable_element is not None:
+                return self._drawable_element.get_absolute_topleft_coords(
+                    parent_drawable_element.get_absolute_topleft_coords(
+                        self._parent.get_absolute_topleft_coords(context),
+                        self._parent.get_absolute_dimensions(context)),
+                    self._parent.get_absolute_dimensions(context))
+            else:
+                return self._drawable_element.get_absolute_topleft_coords(
+                    self._parent.get_absolute_topleft_coords(context),
+                    self._parent.get_absolute_dimensions(context))
         else:
             return self._parent.get_absolute_topleft_coords(context)
 
