@@ -6,6 +6,11 @@ from .shapenodes import RectangleGraphNode, WindowRootGraphNode
 class Alignments:
 
     @staticmethod
+    def get_center_of_dimension(relative_perc):
+        total_remainder = 1.0 - relative_perc
+        return total_remainder / 2.0
+
+    @staticmethod
     def get_top_aligned_offset(left_offset_percent):
         return RelativeOffsetCoord(x_percent_offset=left_offset_percent, y_percent_offset=0.0)
 

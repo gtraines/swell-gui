@@ -3,7 +3,7 @@ from swellgui import UiWindow, AppContextAbc, GuiAppAbc, \
                      KeypressHandler, WindowEventsHandler
 from pygame import locals as pyg_consts
 from swellgui import DEFAULT_UI_CONFIG
-from swellgui.uielements import BasicLayout, Coord2D, \
+from swellgui.uielements import Alignments, BasicLayout, Coord2D, \
                                 DynamicTextGraphNode, \
                                 SceneGraph, \
                                 SceneGraphNode, \
@@ -38,15 +38,10 @@ class GuiApp(GuiAppAbc):
     def cleanup(self):
         return
 
-    @staticmethod
-    def _get_centered_offset(relative_percent):
-        remainder = 1.0 - relative_percent
-        return remainder / 2.0
-
     def _get_centered_static_label_node(self, text_content, relative_height_perc, relative_width_perc):
 
-        y_offset = self._get_centered_offset(relative_height_perc)
-        x_offset = self._get_centered_offset(relative_width_perc)
+        y_offset = Alignments.get_center_of_dimension(relative_height_perc)
+        x_offset = Alignments.get_center_of_dimension(relative_width_perc)
 
         text_offset_topleft = RelativeOffsetCoord(x_percent_offset=x_offset, y_percent_offset=y_offset)
         text_dimensions_offset = RelativeDimensions(height_percent=relative_height_perc,
@@ -57,34 +52,6 @@ class GuiApp(GuiAppAbc):
                                                     relative_layer=1)
         static_text_node = StaticTextGraphNode(text_content, text_elem_desc, None, None)
         return static_text_node
-
-    def _get_centered_rectangle_node(self, relative_height_perc, relative_width_perc):
-        y_offset = self._get_centered_offset(relative_height_perc)
-        x_offset = self._get_centered_offset(relative_width_perc)
-
-        offset_topleft = RelativeOffsetCoord(x_percent_offset=x_offset, y_percent_offset=y_offset)
-        dimensions = RelativeDimensions(height_percent=relative_height_perc,
-                                        width_percent=relative_width_perc)
-        elem_desc = RelativeElementDescription(topleft_offset=offset_topleft,
-                                               relative_dimensions=dimensions,
-                                               relative_layer=1)
-        rectangle_node = RectangleGraphNode(elem_desc, None, None)
-        return rectangle_node
-
-    def _get_starting_scene_graph(self):
-
-        text_node1 = self._get_centered_static_label_node("text node 1", 0.10, 0.10)
-        child_rect_node = self._get_centered_rectangle_node(0.95, 0.95)
-
-        subchild_rect_node = self._get_centered_rectangle_node(0.95, 0.95)
-        child_rect_node.add_child(subchild_rect_node)
-        child_rect_node.add_child(text_node1)
-
-        root_node = WindowRootGraphNode()
-
-        root_node.add_child(child_rect_node)
-        scene_graph = SceneGraph(root_node)
-        return scene_graph
 
     @staticmethod
     def _get_keypress_type_handler():
