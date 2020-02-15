@@ -1,6 +1,6 @@
 import pygame
 from pygame.rect import Rect
-from .relativeelement import RelativeElementAbc
+from .relativeelement import RelativeElementAbc, RelativeDimensions, RelativeOffsetCoord, RelativeElementDescription
 from .scenegraph import SceneGraphNode
 
 
@@ -117,3 +117,14 @@ class DynamicTextGraphNode(SceneGraphNode):
     # def showInfoText(self):
     #     for sprite in self.info_text:
     #         sprite.visible = True
+
+
+class WindowRootGraphNode(RectangleGraphNode):
+
+    def __init__(self):
+        root_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.0, y_percent_offset=0.0)
+        root_dims = RelativeDimensions(height_percent=1.0, width_percent=1.0)
+        root_elem_desc = RelativeElementDescription(topleft_offset=root_offset_topleft,
+                                                    relative_dimensions=root_dims,
+                                                    relative_layer=1)
+        RectangleGraphNode.__init__(self, root_elem_desc, None, None)

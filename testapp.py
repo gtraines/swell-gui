@@ -3,7 +3,7 @@ from swellgui import UiWindow, AppContextAbc, GuiAppAbc, \
                      KeypressHandler, WindowEventsHandler
 from pygame import locals as pyg_consts
 from swellgui import DEFAULT_UI_CONFIG
-from swellgui.uielements import Coord2D, \
+from swellgui.uielements import BasicLayout, Coord2D, \
                                 DynamicTextGraphNode, \
                                 SceneGraph, \
                                 SceneGraphNode, \
@@ -11,7 +11,8 @@ from swellgui.uielements import Coord2D, \
                                 RelativeDimensions, \
                                 RelativeElementDescription, \
                                 RelativeOffsetCoord, \
-                                StaticTextGraphNode
+                                StaticTextGraphNode, \
+                                WindowRootGraphNode
 
 
 class GuiAppContext(AppContextAbc):
@@ -28,28 +29,60 @@ class GuiApp(GuiAppAbc):
 
         window = UiWindow(DEFAULT_UI_CONFIG)
         app_ctx = GuiAppContext(window.current_ui_config)
-        app_ctx.scene_graph = self._get_starting_scene_graph()
+
+        app_ctx.scene_graph = BasicLayout()
+        app_ctx.scene_graph.bottom_banner.add_child(
+            self._get_centered_static_label_node("THIS IS THE DAWNING OF THE AGE OF AQUARIUS", .10, .30))
         GuiAppAbc.__init__(self, window, app_ctx, [keypress_type_handler, WindowEventsHandler()])
 
     def cleanup(self):
         return
 
     @staticmethod
-    def _get_starting_scene_graph():
-        text_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.05, y_percent_offset=0.05)
-        text_dimensions_offset = RelativeDimensions(height_percent=.90, width_percent=.90)
+    def _get_centered_offset(relative_percent):
+        remainder = 1.0 - relative_percent
+        return remainder / 2.0
+
+    def _get_centered_static_label_node(self, text_content, relative_height_perc, relative_width_perc):
+
+        y_offset = self._get_centered_offset(relative_height_perc)
+        x_offset = self._get_centered_offset(relative_width_perc)
+
+        text_offset_topleft = RelativeOffsetCoord(x_percent_offset=x_offset, y_percent_offset=y_offset)
+        text_dimensions_offset = RelativeDimensions(height_percent=relative_height_perc,
+                                                    width_percent=relative_width_perc)
+
         text_elem_desc = RelativeElementDescription(topleft_offset=text_offset_topleft,
                                                     relative_dimensions=text_dimensions_offset,
                                                     relative_layer=1)
-        static_text_node = StaticTextGraphNode("HELLO", text_elem_desc, None, None)
+        static_text_node = StaticTextGraphNode(text_content, text_elem_desc, None, None)
+        return static_text_node
 
-        root_offset_topleft = RelativeOffsetCoord(x_percent_offset=0.025, y_percent_offset=0.025)
-        root_dims_offset = RelativeDimensions(height_percent=0.95, width_percent=0.95)
-        root_elem_desc = RelativeElementDescription(topleft_offset=root_offset_topleft,
-                                                    relative_dimensions=root_dims_offset,
-                                                    relative_layer=1)
-        root_node = RectangleGraphNode(root_elem_desc, None,  None)
-        root_node.add_child(static_text_node)
+    def _get_centered_rectangle_node(self, relative_height_perc, relative_width_perc):
+        y_offset = self._get_centered_offset(relative_height_perc)
+        x_offset = self._get_centered_offset(relative_width_perc)
+
+        offset_topleft = RelativeOffsetCoord(x_percent_offset=x_offset, y_percent_offset=y_offset)
+        dimensions = RelativeDimensions(height_percent=relative_height_perc,
+                                        width_percent=relative_width_perc)
+        elem_desc = RelativeElementDescription(topleft_offset=offset_topleft,
+                                               relative_dimensions=dimensions,
+                                               relative_layer=1)
+        rectangle_node = RectangleGraphNode(elem_desc, None, None)
+        return rectangle_node
+
+    def _get_starting_scene_graph(self):
+
+        text_node1 = self._get_centered_static_label_node("text node 1", 0.10, 0.10)
+        child_rect_node = self._get_centered_rectangle_node(0.95, 0.95)
+
+        subchild_rect_node = self._get_centered_rectangle_node(0.95, 0.95)
+        child_rect_node.add_child(subchild_rect_node)
+        child_rect_node.add_child(text_node1)
+
+        root_node = WindowRootGraphNode()
+
+        root_node.add_child(child_rect_node)
         scene_graph = SceneGraph(root_node)
         return scene_graph
 

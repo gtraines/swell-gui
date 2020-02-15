@@ -12,6 +12,9 @@ class SceneGraphNode(UpdatableAbc):
             Validations.assert_is_drawable(self._drawable_element)
 
         self._parent = parent
+        if self._parent is not None:
+            self._parent.add_child(self)
+
         self._children = []
         if children is not None:
             for child in children:
@@ -52,16 +55,17 @@ class SceneGraphNode(UpdatableAbc):
         if self._parent is None:
             return Coord2D(0, 0)
         elif self._drawable_element is not None:
-            parent_abs_coords = self._parent.get_absolute_topleft_coords(context)
+
             parent_drawable_element = self._parent.drawable_element
 
-            if parent_abs_coords.x == 0 \
-            and parent_abs_coords.y == 0 \
-            and parent_drawable_element is not None:
+            if parent_drawable_element is not None:
+                parent_element_topleft = parent_drawable_element.get_absolute_topleft_coords(
+                    self._parent.get_absolute_topleft_coords(context),
+                    self._parent.get_absolute_dimensions(context)
+                )
+
                 return self._drawable_element.get_absolute_topleft_coords(
-                    parent_drawable_element.get_absolute_topleft_coords(
-                        self._parent.get_absolute_topleft_coords(context),
-                        self._parent.get_absolute_dimensions(context)),
+                    parent_element_topleft,
                     self._parent.get_absolute_dimensions(context))
             else:
                 return self._drawable_element.get_absolute_topleft_coords(
@@ -85,7 +89,7 @@ class SceneGraphNode(UpdatableAbc):
                                 width=context.ui_surface.get_width())
         elif self._drawable_element is not None:
             # we have a drawn element so we should use that as the dimensions for this node
-            return self._drawable_element.get_absolute_dimensions(self._parent.get_absolute_dimensions())
+            return self._drawable_element.get_absolute_dimensions(self._parent.get_absolute_dimensions(context))
         else:
             # we have an invisible/pass through node so use the parent
             return self._parent.get_absolute_dimensions(context)
@@ -113,6 +117,7 @@ class SceneGraph(UpdatableAbc):
 
     def __init__(self, root_node):
         SceneGraphNode.validate_node(root_node)
+
         self._root_node = root_node
 
     def update(self, context):
